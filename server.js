@@ -20,7 +20,7 @@ var PORT = process.env.PORT || 5000;
 
 mongoose
   .connect(
-    "mongodb+srv://Owais:owais@cluster0.wde1dec.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/"
+    "mongodb+srv://Owais:owais@cluster0.wde1dec.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
   )
   .then((res) => {
     console.log("ressss=>>");
