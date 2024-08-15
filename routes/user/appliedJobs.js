@@ -362,6 +362,60 @@ router.post("/applyJobs", async (req, res) => {
   }
 });
 
+router.post("/applyJobsFlask", async (req, res) => {
+  const { companyId, userId, jobId, score } = req.body;
+  try {
+    const user = await User.findOne({ _id: userId });
+    const resume = await Resume.findOne({ userId: userId });
+    const coverLetter = await CoverLetter.findOne({ userId: userId });
+    const data = await Jobs.findOne({ _id: jobId });
+
+
+    // Check if the percentage is greater than the threshold
+    
+      let candidate = {
+        userId: userId,
+        userDetails: user,
+        resume: resume,
+        coverLetter: coverLetter,
+        score: score, // corrected: score should be the percentage
+      
+        
+      };
+
+      if (data) {
+        let tempArr = data.appliedCandidate;
+        let fav = data.favourite;
+        fav.push(userId);
+        tempArr.push(candidate);
+        const appliedJob = new UserAppliedJobs({ companyId, userId, jobId });
+        const updateJob = await Jobs.findByIdAndUpdate(
+          { _id: jobId },
+          { appliedCandidate: tempArr, appliedCandidateIds: fav },
+          {
+            new: true,
+            useFindAndModify: true,
+          }
+        );
+        const result = await appliedJob.save();
+
+        res.send({
+          data: data,
+          status: "ok",
+        });
+      } 
+        
+
+  } catch (error) {
+    console.log(error, "ERRRRRRRRRRR");
+    res.status(400).send({
+      status: "error",
+      message: "something went wrong",
+    });
+  }
+});
+
+
 router.post("/getAppliedJobs", async (req, res) => {
   try {
     let tempArr = [];
